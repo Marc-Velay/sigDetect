@@ -22,11 +22,13 @@ Xname = 'xData.pkl'
 np.seterr(divide='ignore', invalid='ignore')
 
 def find_next_bottom(X):
-    max_bot = X[2][0]
     i = 0
     try:
         while i+1 <= X.shape[1]:
-            if X[2][i] > X[2][i+1]:
+            close = is_close_to(X[2][i], X[2][i+1])
+            if (X[2][i] >= X[2][i+1]):
+                i+=1
+            elif close == True:
                 i+=1
             else:
                 break
@@ -36,11 +38,13 @@ def find_next_bottom(X):
 
 
 def find_next_top(X):
-    min_bot = X[1][0]
     i = 0
     try:
         while i+1 <= X.shape[1]:
-            if X[1][i] < X[1][i+1]:
+            close = is_close_to(X[1][i], X[1][i+1])
+            if (X[1][i] <= X[1][i+1]):
+                i+=1
+            elif close == True:
                 i+=1
             else:
                 break
@@ -48,6 +52,11 @@ def find_next_top(X):
         pass
     return i
 
+def is_close_to(val1, val2):
+    if abs(val1-val2) < 0:
+        return True
+    else:
+        return False
 
 if __name__ == '__main__':
     if not os.path.isfile(Xname):
@@ -65,7 +74,7 @@ if __name__ == '__main__':
     len = len(X)
     X = np.transpose(X).reshape((5,len))
     STEP=20
-    for start in range(0, X.shape[1], 2):#STEP):
+    for start in range(0, X.shape[1]-STEP, 2):#STEP):
         print(start)
         X2 = X[:, start:start+STEP]
         Y2 = Y[start:start+STEP]
@@ -89,7 +98,9 @@ if __name__ == '__main__':
         if  top_index < bot_index-1 and \
             bot_index < second_top_index-1 and \
             X2[1][second_top_index] < X2[1][top_index] and \
-            dist_var_bot_top2 > dist_var_top_bot*0.33 and dist_var_bot_top2 < dist_var_top_bot*0.66:
+            dist_var_bot_top2 > dist_var_top_bot*0.33 and \
+            dist_var_bot_top2 < dist_var_top_bot*0.66 :
+
             line_eqn = lambda x : ((X2[1][second_top_index]-X2[1][top_index])/(second_top_index-top_index)) * (x - top_index) + top_value
             line_eqn_parr = lambda x : ((X2[1][second_top_index]-X2[1][top_index])/(second_top_index-top_index)) * (x - top_index) + top_value - (line_eqn(bot_index) - X2[2][bot_index])
 

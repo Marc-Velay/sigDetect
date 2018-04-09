@@ -51,3 +51,9 @@ def createX_Y(data):
         pickle.dump(Y, fid)
     print('using', len(X), 'minutes')
     return X, Y
+
+def build_Y(data):
+    new_Y = []
+
+
+    return new_Y

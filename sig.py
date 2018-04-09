@@ -51,10 +51,20 @@ if __name__ == '__main__':
 
         detected, indexes = detect_head_shoulder(X2)
 
+        print(X2.shape)
 
+        fig,ax = plt.subplots(1)
+        fig.subplots_adjust(left=0,right=1,bottom=0,top=1)
+        ax.patch.set_facecolor('black')
+        ax.axis('off')
+        for i in range(0, 4):
+            plt.plot(X2[i])
+        ax.axis('off')
+        name = 'img/'+ str(start) +'.png'
+        fig.savefig(name, dpi=50, frameon='false', facecolor='black')
+        input()
+        '''
         if detected == True:
             #display_pattern_head_shoulder(X2, indexes)
             counter +=1
-    print(counter)
-    print(X.shape[1])
-    print(X.shape[1]/WINDOW)
+        print(counter)'''

@@ -1,6 +1,10 @@
 import numpy as np
-import matplotlib.pylab as plt
+import matplotlib.pyplot as plt
 import mpl_finance #pip install https://github.com/matplotlib/mpl_finance/archive/master.zip
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+
+
 
 def display_pattern_head_shoulder(X2, indexes):
     line_eqn = lambda x : ((X2[1][int(indexes[2])]-X2[1][int(indexes[0])])/(indexes[2]-indexes[0])) * (x - indexes[0]) + X2[1][int(indexes[0])]
@@ -52,17 +56,24 @@ def display_pattern_head_shoulder(X2, indexes):
     plt.plot([ line_eqn_parr(x) for x in np.arange(X2.shape[1])], color='k', linestyle='-', linewidth=1)
 
 
-    '''legend = ax.legend(loc='upper center', shadow=False)
-    frame = legend.get_frame()
-    frame.set_facecolor('0.90')
-
-    # Set the fontsize
-    for label in legend.get_texts():
-        label.set_fontsize('large')
-    for label in legend.get_lines():
-        label.set_linewidth(1.5)  # the legend line width'''
-
     mpl_finance.candlestick_ohlc(ax, ohlc, width=0.5, colorup='g', colordown='r')
 
     ax.autoscale_view()
     plt.show()
+
+def save_line_chart_inverted(X, start):
+    fig = Figure()
+    canvas = FigureCanvas(fig)
+    ax = fig.subplots(1)
+    fig.subplots_adjust(left=0,right=1,bottom=0,top=1)
+    #ax.patch.set_facecolor('black')
+    ax.axis('off')
+    ax.plot(X[1], 'w')
+    ax.plot(X[2], 'w')
+    ax.axis('off')
+    name = 'img/'+ str(start) +'.png'
+    canvas.print_figure(name, dpi=10, frameon='false', facecolor='black')
+    fig.clf()
+    ax.cla()
+    plt.close(fig)
+    X = None

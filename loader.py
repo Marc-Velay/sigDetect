@@ -1,13 +1,19 @@
+from sig import Ximg, Yimg
 import csv
+import pickle
 from datetime import timezone, datetime
 from dateutil.parser import parse
 from calendar import timegm
+from tqdm import tqdm
 import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+
 import numpy as np
 import pandas as pd
 
-import seaborn as sns
-sns.despine()
+from os import listdir
+from os.path import isfile, join
+
 
 def loadData(filename):
 
@@ -23,3 +29,24 @@ def loadData(filename):
     data = np.column_stack((openp, highp, lowp, closep, volumep))
 
     return np.transpose(data)
+
+def load_data_from_imgs(y_file):
+    files = [f for f in listdir('img/') if isfile(join('img/', f)) and '.pkl' not in f]
+    X = np.empty((len(files), 48, 64, 3))
+    counter = 0
+
+    with tqdm(total=len(files)) as pbar:
+        for f in files:
+            pbar.update(1)
+            img = mpimg.imread('img/'+f)
+            #mpimg.close()
+            X[counter] = img[:, :, :3]
+
+    print(np.array(X).shape)
+    with open(Yimg, 'rb') as fid:
+            Y = pickle.load(fid)
+    '''if not isfile(Ximg):
+        with open(Ximg, 'wb') as fid:
+            pickle.dump(X, fid)'''
+
+    return X, Y

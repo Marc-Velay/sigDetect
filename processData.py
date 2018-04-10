@@ -1,4 +1,5 @@
 from sig import *
+from create_dataset import *
 import pickle
 
 def data2change(data):
@@ -51,9 +52,3 @@ def createX_Y(data):
         pickle.dump(Y, fid)
     print('using', len(X), 'minutes')
     return X, Y
-
-def build_Y(data):
-    new_Y = []
-
-
-    return new_Y

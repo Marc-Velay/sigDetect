@@ -32,6 +32,20 @@ if __name__ == '__main__':
     #Y: Reads the truth vector from the pickle created during create_dataset
     X, Y = load_data_from_imgs(Yimg)
 
+    plt.plot(Y[:, 0])
+    plt.show()
+
     alexnet = get_alexNet(X[:BATCH_SIZE].shape, num_classes)
 
     alexnet.summary()
+
+    alexnet.compile(loss='categorical_crossentropy',
+              optimizer=Adam(),
+              metrics=['accuracy'])
+
+    '''alexnet.fit(x_train, y_train,
+                        batch_size=batch_size,
+                        epochs=epochs,
+                        verbose=1,
+                        validation_data=(x_test, y_test))
+    '''

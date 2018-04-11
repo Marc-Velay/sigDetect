@@ -1,4 +1,4 @@
-from sig import Yimg, width_img, heigth_img
+from sig import Yimg, width_img, heigth_img, nb_channels
 import csv
 import pickle
 import re
@@ -44,14 +44,14 @@ def load_data_from_imgs(y_file):
         print('Run create_dataset.py first!')
         exit(1)
     files.sort(key=stringSplitByNumbers)
-    X = np.empty((len(files), heigth_img, width_img))
+    X = np.empty((len(files), heigth_img, width_img, nb_channels))
     counter = 0
 
     with tqdm(total=len(files)) as pbar:
         for f in files:
             pbar.update(1)
             img = mpimg.imread('img/'+f)
-            X[counter] = img[:, :, 0]
+            X[counter] = img[:, :, 0:3]
 
     with open(Yimg, 'rb') as fid:
             Y = pickle.load(fid)

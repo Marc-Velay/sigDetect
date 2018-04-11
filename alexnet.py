@@ -7,7 +7,7 @@ from keras.optimizers import Adam
 # Paper: https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf
 # Adapted from: https://github.com/jkh911208/cswithjames/blob/master/8_CIFAR10_alexnet.py
 
-def get_alexNet(img_shape=(1, 48, 64), num_classes=2):
+def get_alexNet(img_shape=(128, 64, 48, 3), num_classes=2):
 
     # AlexNet Define the Model
     model = Sequential()

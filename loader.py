@@ -1,6 +1,7 @@
-from sig import Ximg, Yimg
+from sig import Yimg, width_img, heigth_img
 import csv
 import pickle
+import re
 from datetime import timezone, datetime
 from dateutil.parser import parse
 from calendar import timegm
@@ -30,23 +31,29 @@ def loadData(filename):
 
     return np.transpose(data)
 
+
+def stringSplitByNumbers(x):
+    r = re.compile('(\d+)')
+    l = r.split(x)
+    return [int(y) if y.isdigit() else y for y in l]
+
+
 def load_data_from_imgs(y_file):
     files = [f for f in listdir('img/') if isfile(join('img/', f)) and '.pkl' not in f]
-    X = np.empty((len(files), 48, 64, 3))
+    if len(files) < 2:
+        print('Run create_dataset.py first!')
+        exit(1)
+    files.sort(key=stringSplitByNumbers)
+    X = np.empty((len(files), heigth_img, width_img))
     counter = 0
 
     with tqdm(total=len(files)) as pbar:
         for f in files:
             pbar.update(1)
             img = mpimg.imread('img/'+f)
-            #mpimg.close()
-            X[counter] = img[:, :, :3]
+            X[counter] = img[:, :, 0]
 
-    print(np.array(X).shape)
     with open(Yimg, 'rb') as fid:
             Y = pickle.load(fid)
-    '''if not isfile(Ximg):
-        with open(Ximg, 'wb') as fid:
-            pickle.dump(X, fid)'''
 
     return X, Y

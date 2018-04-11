@@ -2,6 +2,7 @@ from loader import *
 from processData import *
 from detect_head_shoulder import *
 from display_patterns import *
+from alexnet import *
 
 import numpy as np
 import pandas as pd
@@ -15,17 +16,22 @@ import talib
 import datetime
 
 
-load_from = '/home/mve/storage/data/Google_jan_mar_2017-8'
-
-Ximg = 'img/xData_img.pkl'
 Yimg = 'img/datasetY.pkl'
 
-np.seterr(divide='ignore', invalid='ignore')
+width_img = 64
+heigth_img = 48
 
+BATCH_SIZE = 128
+num_classes = 2
+epochs = 10
 
 if __name__ == '__main__':
     print('Gathering data')
+    #Run create_dataset first!
+    #X: Reads all the images and places them in X,
+    #Y: Reads the truth vector from the pickle created during create_dataset
     X, Y = load_data_from_imgs(Yimg)
 
-    print(X.shape)
-    print(Y.shape)
+    alexnet = get_alexNet(X[:BATCH_SIZE].shape, num_classes)
+
+    alexnet.summary()

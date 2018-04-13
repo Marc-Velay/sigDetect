@@ -38,8 +38,8 @@ def stringSplitByNumbers(x):
     return [int(y) if y.isdigit() else y for y in l]
 
 
-def load_data_from_imgs(y_file):
-    files = [f for f in listdir('img/') if isfile(join('img/', f)) and '.pkl' not in f]
+def load_data_from_imgs(dir ,y_file):
+    files = [f for f in listdir(dir) if isfile(join(dir, f)) and '.pkl' not in f]
     if len(files) < 2:
         print('Run create_dataset.py first!')
         exit(1)
@@ -50,8 +50,9 @@ def load_data_from_imgs(y_file):
     with tqdm(total=len(files)) as pbar:
         for f in files:
             pbar.update(1)
-            img = mpimg.imread('img/'+f)
+            img = mpimg.imread(dir+f)
             X[counter] = img[:, :, 0:3]
+            counter+=1
 
     with open(Yimg, 'rb') as fid:
             Y = pickle.load(fid)

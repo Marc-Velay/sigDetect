@@ -102,5 +102,5 @@ ENV/
 
 
 *.pkl
-
-/img
+*.hdf5
+/img*

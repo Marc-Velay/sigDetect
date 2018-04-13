@@ -27,17 +27,17 @@ import graphviz
 #img2 = candlestick
 #img3 = OHLC
 #img4 = High
-dir = 'img5/'
+dir = 'img_3crows_talib_dtset3/'
 Yimg = dir + 'datasetY.pkl'
 weights_file = 'best_alexnet.hdf5'
 
-width_img = 64
-heigth_img = 48
+width_img = 96
+heigth_img = 72
 nb_channels = 3
 
 BATCH_SIZE = 128
 NUM_CLASSES = 2
-EPOCHS = 15
+EPOCHS = 50
 
 def split_data(X, Y, ratio=0.7):
     size = X.shape[0]

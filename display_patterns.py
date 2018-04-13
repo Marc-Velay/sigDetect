@@ -209,8 +209,8 @@ def display_OHLC(X2):
 def save_line_chart_inverted(X, start, indexes, where):
 
 
-    '''line_eqn = lambda x : ((X[1][int(indexes[2])]-X[1][int(indexes[0])])/(indexes[2]-indexes[0])) * (x - indexes[0]) + X[1][int(indexes[0])]
-    line_eqn_parr = lambda x : ((X[1][int(indexes[2])]-X[1][int(indexes[0])])/(indexes[2]-indexes[0])) * (x - indexes[0]) + X[1][int(indexes[0])] - (line_eqn(indexes[1]) - X[2][int(indexes[1])])
+    #line_eqn = lambda x : ((X[1][int(indexes[2])]-X[1][int(indexes[0])])/(indexes[2]-indexes[0])) * (x - indexes[0]) + X[1][int(indexes[0])]
+    #line_eqn_parr = lambda x : ((X[1][int(indexes[2])]-X[1][int(indexes[0])])/(indexes[2]-indexes[0])) * (x - indexes[0]) + X[1][int(indexes[0])] - (line_eqn(indexes[1]) - X[2][int(indexes[1])])
 
     # determine number of days and create a list of those days
     ndays = np.unique(np.trunc(X[0,:]), return_index=True)
@@ -232,8 +232,8 @@ def save_line_chart_inverted(X, start, indexes, where):
 
     ohlc = np.column_stack((xdays, X[0], X[1], X[2], X[3]))
 
-    plt.plot([ line_eqn(x) for x in np.arange(X.shape[1])], color='k', linestyle='-', linewidth=1)
-    plt.plot([ line_eqn_parr(x) for x in np.arange(X.shape[1])], color='k', linestyle='-', linewidth=1)
+    #plt.plot([ line_eqn(x) for x in np.arange(X.shape[1])], color='k', linestyle='-', linewidth=1)
+    #plt.plot([ line_eqn_parr(x) for x in np.arange(X.shape[1])], color='k', linestyle='-', linewidth=1)
 
     mpl_finance.candlestick_ohlc(ax, ohlc, width=0.5, colorup='g', colordown='r')
 
@@ -241,13 +241,13 @@ def save_line_chart_inverted(X, start, indexes, where):
     name = str(where)+ str(start) +'.png'
     if os.path.isfile(name):
         name = str(where)+ str(start) + '_bis' +'.png'
-    canvas.print_figure(name, dpi=10, frameon='false', facecolor='black')
+    canvas.print_figure(name, dpi=15, frameon='false', facecolor='black')
     fig.clf()
     ax.cla()
-    plt.close(fig)'''
+    plt.close(fig)
 
 
-    fig = Figure()
+    '''fig = Figure()
     canvas = FigureCanvas(fig)
     ax = fig.subplots(1)
     fig.subplots_adjust(left=0,right=1,bottom=0,top=1)
@@ -265,4 +265,4 @@ def save_line_chart_inverted(X, start, indexes, where):
     fig.clf()
     ax.cla()
     plt.close(fig)
-    X = None
+    X = None'''

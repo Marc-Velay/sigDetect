@@ -20,7 +20,7 @@ import talib
 
 load_from = '/home/mve/storage/data/Google_jan_mar_2017-8'
 
-save_dir = '3crows_talib_dtset/'
+save_dir = 'img_3crows_talib_dtset3/'
 Yimg = save_dir + 'datasetY.pkl'
 
 np.seterr(divide='ignore', invalid='ignore')
@@ -57,7 +57,7 @@ if __name__ == '__main__':
                 Y.append([1., 0.])
                 index+=1
             else:
-                if (counter%9) == 0:
+                if counter%10 == 0:
                     save_line_chart_inverted(X2, start, indexes, save_dir)
                     Y.append([0., 1.])
                     index+=1

@@ -20,7 +20,7 @@ import talib
 
 load_from = '/home/mve/storage/data/Google_jan_mar_2017-8'
 
-save_dir = 'img_3crows_talib_dtset3/'
+save_dir = 'img_large_OC/'
 Yimg = save_dir + 'datasetY.pkl'
 
 np.seterr(divide='ignore', invalid='ignore')
@@ -48,10 +48,10 @@ if __name__ == '__main__':
             X2 = X[:, start:start+WINDOW]
 
 
-            #detected, indexes = detect_head_shoulder(X2)
-            res = talib.CDLIDENTICAL3CROWS(X2[0], X2[1], X2[2], X2[3])
+            detected, indexes = detect_head_shoulder(X2)
+            #res = talib.CDLIDENTICAL3CROWS(X2[0], X2[1], X2[2], X2[3])
 
-            if not res.any() == 0:
+            if not detected:
                 #if detected == True:
                 save_line_chart_inverted(X2, start, indexes, save_dir)
                 Y.append([1., 0.])

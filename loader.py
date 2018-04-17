@@ -51,6 +51,7 @@ def load_data_from_imgs(dir ,y_file):
         for f in files:
             pbar.update(1)
             img = mpimg.imread(dir+f)
+            img = 1.0*(img > 0)
             X[counter] = img[:, :, 0:3]
             counter+=1
 

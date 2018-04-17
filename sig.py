@@ -19,6 +19,7 @@ from sklearn.metrics import confusion_matrix
 from keras.callbacks import ModelCheckpoint, ReduceLROnPlateau, CSVLogger
 from keras.optimizers import SGD, RMSprop
 from keras.utils import plot_model
+from keras.preprocessing.image import ImageDataGenerator
 import h5py
 import pydot
 import graphviz
@@ -27,17 +28,18 @@ import graphviz
 #img2 = candlestick
 #img3 = OHLC
 #img4 = High
-dir = 'img_3crows_talib_dtset3/'
+dir = 'img4/'
 Yimg = dir + 'datasetY.pkl'
 weights_file = 'best_alexnet.hdf5'
 
-width_img = 96
-heigth_img = 72
+width_img = 64
+heigth_img = 48
 nb_channels = 3
 
 BATCH_SIZE = 128
 NUM_CLASSES = 2
 EPOCHS = 50
+seed = 128
 
 def split_data(X, Y, ratio=0.7):
     size = X.shape[0]
@@ -50,13 +52,15 @@ def split_data(X, Y, ratio=0.7):
     return X_train, X_test, Y_train, Y_test
 
 if __name__ == '__main__':
+    rng = np.random.RandomState(seed)
     print('Gathering data')
     #Run create_dataset first!
     #X: Reads all the images and places them in X,
     #Y: Reads the truth vector from the pickle created during create_dataset
     X, Y = load_data_from_imgs(dir, Yimg)
-    X, Y = shuffle_in_unison(X, Y)
-    X_train, X_test, Y_train, Y_test = split_data(X, Y)
+    #X, Y = shuffle_in_unison(X, Y)
+    X_train, X_test, Y_train, Y_test = split_data(X, Y, ratio=0.6)
+    X_test, X_val, Y_test, Y_val = split_data(X_test, Y_test, ratio=0.5)
 
     print(len([y for y in Y_test if y[0]==1]))
     print(len([y for y in Y_test if y[1]==1]))
@@ -78,13 +82,21 @@ if __name__ == '__main__':
               optimizer=opt,
               metrics=['accuracy'])
 
-    history = alexnet.fit(X_train, Y_train,
-                        batch_size=BATCH_SIZE,
+    datagen = ImageDataGenerator(horizontal_flip=True)
+
+    '''history = alexnet.fit_generator(datagen.flow(X_train, Y_train, batch_size=BATCH_SIZE),
                         epochs=EPOCHS,
                         verbose=1,
                         callbacks=[reduce_lr, checkpointer],
                         class_weight = class_weight,
-                        validation_data=(X_test, Y_test))
+                        validation_data=(X_test, Y_test))'''
+
+    history = alexnet.fit(X_train, Y_train, batch_size=BATCH_SIZE,
+                        epochs=EPOCHS,
+                        verbose=1,
+                        callbacks=[reduce_lr, checkpointer],
+                        class_weight = class_weight,
+                        validation_data=(X_val, Y_val))
 
 
     alexnet.load_weights(weights_file)

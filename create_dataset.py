@@ -19,8 +19,8 @@ import talib
 #see http://projectfx.lusis:3000/fda/ai-bibliography/src/master/ebook/Deep_Learning_with_Python.pdf for data generator
 
 load_from = '/home/mve/storage/data/Google_jan_mar_2017-8'
-
-save_dir = 'img_large_OC/'
+#load_from = '/home/mve/storage/data/CAC40_jan_march_2018'
+save_dir = 'img_large_60m/'
 Yimg = save_dir + 'datasetY.pkl'
 
 np.seterr(divide='ignore', invalid='ignore')
@@ -35,7 +35,7 @@ if __name__ == '__main__':
 
     len = len(X)
     X = np.transpose(X).reshape((5,len))
-    WINDOW=25
+    WINDOW=60
     STEP=1
     Y = []
     counter = 0

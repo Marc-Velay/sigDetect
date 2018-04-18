@@ -14,30 +14,49 @@ def data2change(data):
 def remap(x, in_min, in_max, out_min, out_max):
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
 
+def classes_frequency(y):
+    nbclasses = len(y[0,])
+    total = np.sum(y)
+    classes_freq = np.zeros((nbclasses,2))
+    for index in range(nbclasses):
+        classes_freq[index] = (np.sum(y[:,index]), np.sum(y[:,index])/total)
+    return classes_freq
+
 def rebalancing(x_train, y_train):
 
     ## Up/Downsample Mid Class of Categorical 3 Classes
     from sklearn.utils import resample
 
-    class_indexes0 = np.where(y_train[:,0] == 1)[0]
-    class_indexes1 = np.where(y_train[:,1] == 1)[0]
-    class_indexes2 = np.where(y_train[:,2] == 1)[0]
+    class_indexes = []
+    mins = []
 
-    n_samples=min(len(class_indexes0),len(class_indexes2))
+    for class_i in range(0, len(y_train[0,])):
+        class_indexes.append(np.array(np.where(y_train[:,class_i] == 1)[0]))
+    #class_indexes = np.array(class_indexes)
 
-    y_resampled1 = resample(class_indexes1, replace=True,n_samples=n_samples,random_state=1000)
 
-    x_train = np.concatenate((x_train[class_indexes0],x_train[y_resampled1],x_train[class_indexes2]))
-    y_train = np.concatenate((y_train[class_indexes0],y_train[y_resampled1],y_train[class_indexes2]))
+    for array in class_indexes:
+        print(array)
+        mins.append(array.shape[0])
 
-    train_indexes = np.arange(x_train.shape[0])
+    n_samples=np.array(mins).min()
 
-    np.random.shuffle(train_indexes)
+    #for class_i in range(0, len(y_train[0,])):
+        #= resample(class_indexes1, replace=True,n_samples=n_samples,random_state=1000)
 
-    x_train = x_train[train_indexes]
-    y_train = y_train[train_indexes]
+    #y_resampled1 = resample(class_indexes1, replace=True,n_samples=n_samples,random_state=1000)
 
-    ai.classes_frequency(y_train)
+    #x_train = np.concatenate((x_train[class_indexes0],x_train[y_resampled1],x_train[class_indexes2]))
+    #y_train = np.concatenate((y_train[class_indexes0],y_train[y_resampled1],y_train[class_indexes2]))
+
+    #train_indexes = np.arange(x_train.shape[0])
+
+    #np.random.shuffle(train_indexes)
+
+    #x_train = x_train[train_indexes]
+    #y_train = y_train[train_indexes]
+
+    #ai.classes_frequency(y_train)
 
     return x_train, y_train
 
@@ -56,7 +75,7 @@ def create_class_weight(labels_dict,mu=1):
 def createX_Y(data):
     X, Y = [], []
     print(len(data[0]))
-    with tqdm(total=len(data[0])) as pbar:
+    with tqdm(total=len(data[0])-1) as pbar:
         for i in range(0, len(data[0])-1, 1):
             pbar.update(1)
             try:
@@ -77,6 +96,42 @@ def createX_Y(data):
                 Y.append(y_i)
     return X, Y
 
+def createX_Y_frames(X, WINDOW, STEP):
+    new_X = []
+    Y = []
+    counter = 0
+
+    with tqdm(total=X.shape[1]-WINDOW) as pbar:
+        for start in range(0, X.shape[1]-WINDOW, STEP):
+            pbar.update(STEP)
+
+            if start+WINDOW < X.shape[1]:
+                X2 = X[:, start:start+WINDOW]
+            else:
+                break
+
+            X2_copy = X2
+            detected, indexes = detect_head_shoulder(X2)
+            #for data in range(0,5):
+            #    X2_copy[data] = (X2[data] - X2[data].min()) * (1 - (-1)) / (X2[data].max() - X2[data].min()) + (-1) #remap(X2[data], X2[data].min(), X2[data].max(), -1, 1)
+
+            if detected:
+                new_X.append(X2_copy)
+                Y.append([1., 0.])
+            else:
+                if counter%29 == 0:
+                    new_X.append(X2_copy)
+                    Y.append([0., 1.])
+            counter+=1
+            X2 = None
+            X2_copy = None
+
+    for sample in new_X:
+        for data in range(0,5):
+            sample[data] = (sample[data] - sample[data].min()) * (1. - (0.)) / (sample[data].max() - sample[data].min()) + (0.)
+    new_X = np.array(new_X).reshape((len(new_X), WINDOW, 5))
+    print(new_X.shape)
+    return np.array(new_X), np.array(Y)
 
 def shuffle_in_unison(a, b):
     # courtsey http://stackoverflow.com/users/190280/josh-bleecher-snyder

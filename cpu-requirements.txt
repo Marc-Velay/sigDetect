@@ -27,7 +27,6 @@ sklearn==0.0
 TA-Lib==0.4.17
 tensorboard==1.7.0
 tensorflow==1.7.0
-tensorflow-gpu==1.7.0
 termcolor==1.1.0
 tqdm==4.21.0
 Werkzeug==0.14.1

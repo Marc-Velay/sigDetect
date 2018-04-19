@@ -117,7 +117,7 @@ if __name__ == '__main__':
             print(classification_report([np.argmax(y) for y in Y_test[:BATCH_SIZE*math.floor(X_test.shape[0]/BATCH_SIZE)]], [np.argmax(y) for y in pred]))
             K.clear_session()
 
-    '''for history in history_log:
+    for history in history_log:
         plt.figure(1)
         plt.plot(history.history['loss'])
         plt.plot(history.history['val_loss'])
@@ -134,7 +134,7 @@ if __name__ == '__main__':
         plt.ylabel('accuracy')
         plt.xlabel('epoch')
         plt.legend(['train', 'test'], loc='best')
-        plt.show()'''
+        plt.show()
     '''history = alexnet.fit(X_train, Y_train, batch_size=BATCH_SIZE,
                         epochs=EPOCHS,
                         verbose=1,

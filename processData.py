@@ -2,6 +2,7 @@ from sig import *
 from create_dataset import *
 import pickle
 from collections import Counter
+from itertools import compress
 import math
 
 def data2change(data):
@@ -14,6 +15,16 @@ def data2change(data):
 def remap(x, in_min, in_max, out_min, out_max):
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
 
+def remap_ohlc(x):
+    new_x = []
+    min = x[2].min()
+    max = x[1].max()
+    new_x.append(remap(x[0],min,max,0,1))
+    new_x.append(remap(x[1],min,max,0,1))
+    new_x.append(remap(x[2],min,max,0,1))
+    new_x.append(remap(x[3],min,max,0,1))
+    return new_x
+
 def classes_frequency(y):
     nbclasses = len(y[0,])
     total = np.sum(y)
@@ -22,43 +33,21 @@ def classes_frequency(y):
         classes_freq[index] = (np.sum(y[:,index]), np.sum(y[:,index])/total)
     return classes_freq
 
-def rebalancing(x_train, y_train):
+def t_f_equal(elem):
+    if elem[0] == 1:
+        return True
+    else:
+        return False
+def subsample(X, Y):
+    indexes = list(compress(range(len(Y)), [t_f_equal(y) for y in Y]))
+    new_X = X[indexes]
+    new_Y = Y[indexes]
+    random.seed(999)
+    false_indexes = random.sample(range(X.shape[0]), len(indexes))
+    new_X = np.append(new_X, X[false_indexes], axis=0)
+    new_Y = np.append(new_Y, Y[false_indexes], axis=0)
+    return new_X, new_Y
 
-    ## Up/Downsample Mid Class of Categorical 3 Classes
-    from sklearn.utils import resample
-
-    class_indexes = []
-    mins = []
-
-    for class_i in range(0, len(y_train[0,])):
-        class_indexes.append(np.array(np.where(y_train[:,class_i] == 1)[0]))
-    #class_indexes = np.array(class_indexes)
-
-
-    for array in class_indexes:
-        print(array)
-        mins.append(array.shape[0])
-
-    n_samples=np.array(mins).min()
-
-    #for class_i in range(0, len(y_train[0,])):
-        #= resample(class_indexes1, replace=True,n_samples=n_samples,random_state=1000)
-
-    #y_resampled1 = resample(class_indexes1, replace=True,n_samples=n_samples,random_state=1000)
-
-    #x_train = np.concatenate((x_train[class_indexes0],x_train[y_resampled1],x_train[class_indexes2]))
-    #y_train = np.concatenate((y_train[class_indexes0],y_train[y_resampled1],y_train[class_indexes2]))
-
-    #train_indexes = np.arange(x_train.shape[0])
-
-    #np.random.shuffle(train_indexes)
-
-    #x_train = x_train[train_indexes]
-    #y_train = y_train[train_indexes]
-
-    #ai.classes_frequency(y_train)
-
-    return x_train, y_train
 
 def create_class_weight(labels_dict,mu=1):
     total = np.sum(list(labels_dict.values()))
@@ -132,6 +121,17 @@ def createX_Y_frames(X, WINDOW, STEP):
     new_X = np.array(new_X).reshape((len(new_X), WINDOW, 5))
     print(new_X.shape)
     return np.array(new_X), np.array(Y)
+
+
+def split_data(X, Y, ratio=0.7):
+    size = X.shape[0]
+    split_point = int(size*ratio)
+    X_train = X[:split_point]
+    X_test = X[split_point:]
+    Y_train = Y[:split_point]
+    Y_test = Y[split_point:]
+
+    return X_train, X_test, Y_train, Y_test
 
 def shuffle_in_unison(a, b):
     # courtsey http://stackoverflow.com/users/190280/josh-bleecher-snyder

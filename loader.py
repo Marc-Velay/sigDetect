@@ -59,3 +59,12 @@ def load_data_from_imgs(dir ,y_file):
             Y = pickle.load(fid)
 
     return X, Y
+
+
+def load_data_from_pkl(dir, y_file, x_file):
+    with open(y_file, 'rb') as fid:
+            Y = pickle.load(fid)
+    with open(x_file, 'rb') as fid:
+            X = pickle.load(fid)
+
+    return X, Y

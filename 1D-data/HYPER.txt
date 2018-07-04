@@ -1,0 +1,4 @@
+WINDOW=60
+STEP=1
+dist_var_bot_top2 > dist_var_top_bot*0.33
+dist_var_bot_top2 < dist_var_top_bot*0.66

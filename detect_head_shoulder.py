@@ -45,12 +45,15 @@ def detect_head_shoulder(X2):
     peaks = np.argpartition(X2[1], -2)[-2:]
     indexes[0] = peaks.min()
 
+    #Indexes of the global minima and maxima succeding first minima
     indexes[1] = find_next_bottom(X2[:, int(indexes[0]):]) + indexes[0]
     indexes[2] = find_next_top(X2[:, int(indexes[1]):]) + indexes[1]
 
     dist_var_top_bot = np.linalg.norm(X2[1][int(indexes[0])]-X2[2][int(indexes[1])])
     dist_var_bot_top2 = np.linalg.norm(X2[2][int(indexes[1])]-X2[1][int(indexes[2])])
-
+    #We compare the positions of the indexes, making sure they are in order min-max-min
+    #The first minima should be smaller than the second
+    #Check the ratios 
     if  indexes[0] < indexes[1]-1 and \
         indexes[1] < indexes[2]-1 and \
         X2[1][int(indexes[2])] < X2[1][int(indexes[0])] and \
